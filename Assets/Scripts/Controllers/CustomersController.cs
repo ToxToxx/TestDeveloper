@@ -139,7 +139,24 @@ namespace CookingPrototype.Controllers {
 		/// <param name="order">Заказ, который пытаемся отдать</param>
 		/// <returns>Флаг - результат, удалось ли успешно отдать заказ</returns>
 		public bool ServeOrder(Order order) {
-			throw  new NotImplementedException("ServeOrder: this feature is not implemented.");
+			var customerToServe = CustomerPlaces
+					.Where(place => !place.IsFree && place.CurCustomer != null && place.CurCustomer.OrderPlaces.Any(op => op.CurOrder == order))
+					.OrderBy(place => place.CurCustomer.WaitTime)
+					.Select(place => place.CurCustomer)
+					.FirstOrDefault();
+
+			if ( customerToServe != null ) {
+				var orderServed = customerToServe.ServeOrder(order);
+
+				if ( customerToServe.IsComplete ) {
+					FreeCustomer(customerToServe);
+				}
+
+				return orderServed;
+			}
+
+			return false;
 		}
 	}
+	
 }
