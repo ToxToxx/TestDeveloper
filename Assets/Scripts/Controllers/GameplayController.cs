@@ -14,6 +14,7 @@ namespace CookingPrototype.Controllers {
 		public GameObject TapBlock   = null;
 		public WinWindow  WinWindow  = null;
 		public LoseWindow LoseWindow = null;
+		public StartWindow StartWindow;
 
 
 		int _ordersTarget = 0;
@@ -26,6 +27,7 @@ namespace CookingPrototype.Controllers {
 			}
 		}
 
+
 		public int        TotalOrdersServed { get; private set; } = 0;
 
 		public event Action TotalOrdersServedChanged;
@@ -36,6 +38,11 @@ namespace CookingPrototype.Controllers {
 			}
 			Instance = this;
 		}
+		void Start() {
+			Init();
+			CustomersController.Instance.Init();
+			StartWindow.Show();
+		}
 
 		void OnDestroy() {
 			if ( Instance == this ) {
@@ -45,7 +52,7 @@ namespace CookingPrototype.Controllers {
 
 		void Init() {
 			TotalOrdersServed = 0;
-			Time.timeScale = 1f;
+			//Time.timeScale = 1f;
 			TotalOrdersServedChanged?.Invoke();
 		}
 
@@ -87,6 +94,7 @@ namespace CookingPrototype.Controllers {
 			Init();
 			CustomersController.Instance.Init();
 			HideWindows();
+			StartWindow.Show();
 
 			foreach ( var place in FindObjectsOfType<AbstractFoodPlace>() ) {
 				place.FreePlace();
